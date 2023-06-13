@@ -103,10 +103,7 @@ PYCURL_SSL_LIBRARY=openssl LDFLAGS="-L/usr/local/opt/openssl/lib" CPPFLAGS="-I/u
 
 ### Docker
 
-```console
-$ docker build --tag nut https://github.com/blawar/nut.git
-$ docker run --rm -it --network=host --env=DISPLAY --volume=/tmp/.X11-unix:/tmp/.X11-unix --volume="$PWD:$PWD" --workdir="$PWD" --user=$(id -u):$(id -g) nut
-```
+
 
 ------
 
