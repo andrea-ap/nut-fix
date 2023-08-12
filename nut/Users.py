@@ -1,4 +1,4 @@
-ti scrivo un codice, puoi riscriverlo in modo che utente si possa collegare con una sola sessione : # -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import os
 import re
 from nut import Print
