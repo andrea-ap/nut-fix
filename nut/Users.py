@@ -4,9 +4,12 @@ import re
 from nut import Print
 
 users = {}
+active_sessions = {}  # Dictionary to track active user sessions
 
 class User:
-	def __init__(self):
+    # ... (rest of the class remains the same)
+    
+    def __init__(self):
 		self.id = None
 		self.password = None
 		self.isAdmin = False
@@ -88,24 +91,38 @@ def first():
 	return None
 
 def auth(id, password, address):
-	#print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
+    global active_sessions
 
-	if id not in users:
-		return None
+    if id not in users:
+        return None
 
-	user = users[id]
+    user = users[id]
 
-	if user.requireAuth == 0 and address == user.remoteAddr:
-		return user
+    if id in active_sessions:
+        return None  # User already has an active session
 
-	if user.remoteAddr and user.remoteAddr != address:
-		return None
+    if user.requireAuth == 0 and address == user.remoteAddr:
+        active_sessions[id] = True  # Mark the user as having an active session
+        return user
 
-	# TODO: save password hash in config
-	if user.password != password:
-		return None
+    if user.remoteAddr and user.remoteAddr != address:
+        return None
 
-	return user
+    # TODO: save password hash in config
+    if user.password != password:
+        return None
+
+    active_sessions[id] = True  # Mark the user as having an active session
+    return user
+
+def end_session(user_id):
+    global active_sessions
+    if user_id in active_sessions:
+        del active_sessions[user_id]  # Remove the user's active session
+
+# ... (rest of the code remains the same)
+
+
 
 def load(path='conf/users.conf'):
 	global users
