@@ -124,47 +124,5 @@ def end_session(user_id):
 
 
 
-def load(path='conf/users.conf'):
-	global users
 
-	if not os.path.isfile(path):
-		id = 'guest'
-		users[id] = User()
-		users[id].setPassword('guest')
-		users[id].setId('guest')
-		return
-
-	firstLine = True
-	map = ['id', 'password', 'isAdmin']
-	with open(path, encoding="utf-8-sig") as f:
-		for line in f.readlines():
-			line = line.strip()
-			if len(line) == 0 or line[0] == '#':
-				continue
-			if firstLine:
-				firstLine = False
-				if re.match(r'[A-Za-z\|\s]+', line, re.I):
-					map = line.split('|')
-					continue
-
-			t = User()
-			t.loadCsv(line, map)
-
-			users[t.id] = t
-
-			Print.info('loaded user ' + str(t.id))
-
-def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
-	os.makedirs(os.path.dirname(fileName), exist_ok=True)
-	global users
-	buffer = ''
-
-	buffer += '|'.join(map) + '\n'
-	for k, t in users.items():
-		buffer += t.serialize(map) + '\n'
-
-	with open(fileName, 'w', encoding='utf-8-sig') as csv:
-		csv.write(buffer)
-
-
-load()
+	
