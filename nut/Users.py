@@ -4,12 +4,9 @@ import re
 from nut import Print
 
 users = {}
-active_sessions = {}  # Dictionary to track active user sessions
 
 class User:
-    # ... (rest of the class remains the same)
-    
-    def __init__(self):
+	def __init__(self):
 		self.id = None
 		self.password = None
 		self.isAdmin = False
@@ -91,38 +88,66 @@ def first():
 	return None
 
 def auth(id, password, address):
-    global active_sessions
+	#print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
 
-    if id not in users:
-        return None
+	if id not in users:
+		return None
 
-    user = users[id]
+	user = users[id]
 
-    if id in active_sessions:
-        return None  # User already has an active session
+	if user.requireAuth == 0 and address == user.remoteAddr:
+		return user
 
-    if user.requireAuth == 0 and address == user.remoteAddr:
-        active_sessions[id] = True  # Mark the user as having an active session
-        return user
+	if user.remoteAddr and user.remoteAddr != address:
+		return None
 
-    if user.remoteAddr and user.remoteAddr != address:
-        return None
+	# TODO: save password hash in config
+	if user.password != password:
+		return None
 
-    # TODO: save password hash in config
-    if user.password != password:
-        return None
+	return user
 
-    active_sessions[id] = True  # Mark the user as having an active session
-    return user
+def load(path='conf/users.conf'):
+	global users
 
-def end_session(user_id):
-    global active_sessions
-    if user_id in active_sessions:
-        del active_sessions[user_id]  # Remove the user's active session
+	if not os.path.isfile(path):
+		id = 'guest'
+		users[id] = User()
+		users[id].setPassword('guest')
+		users[id].setId('guest')
+		return
 
-# ... (rest of the code remains the same)
+	firstLine = True
+	map = ['id', 'password', 'isAdmin']
+	with open(path, encoding="utf-8-sig") as f:
+		for line in f.readlines():
+			line = line.strip()
+			if len(line) == 0 or line[0] == '#':
+				continue
+			if firstLine:
+				firstLine = False
+				if re.match(r'[A-Za-z\|\s]+', line, re.I):
+					map = line.split('|')
+					continue
+
+			t = User()
+			t.loadCsv(line, map)
+
+			users[t.id] = t
+
+			Print.info('loaded user ' + str(t.id))
+
+def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
+	os.makedirs(os.path.dirname(fileName), exist_ok=True)
+	global users
+	buffer = ''
+
+	buffer += '|'.join(map) + '\n'
+	for k, t in users.items():
+		buffer += t.serialize(map) + '\n'
+
+	with open(fileName, 'w', encoding='utf-8-sig') as csv:
+		csv.write(buffer)
 
 
-
-
-	
+load()
