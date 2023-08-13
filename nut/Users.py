@@ -1,21 +1,21 @@
-# -*- coding: utf-8 -*-
 import os
 import re
-from nut import Print
 
 users = {}
 
 class User:
-	def __init__(self):
-		self.id = None
-		self.password = None
-		self.isAdmin = False
-		self.remoteAddr = None
-		self.requireAuth = True
-		self.switchHost = None
-		self.switchPort = None
+    def __init__(self):
+        self.id = None
+        self.password = None
+        self.isAdmin = False
+        self.remoteAddr = None
+        self.requireAuth = True
+        self.switchHost = None
+        self.switchPort = None
 
-	def loadCsv(self, line, map=[]):
+    # ... (resto del codice per la classe User) ...
+    
+    def loadCsv(self, line, map=[]):
 		split = line.split('|')
 		for i, value in enumerate(split):
 			if i >= len(map):
@@ -86,68 +86,73 @@ def first():
 	for id, user in users.items():
 		return user
 	return None
+    
+    
+    # ... (fine del codice per la classe User) ...
+    
+    
+    
+
+def find_user_by_credentials(username, password):
+    for user in users.values():
+        if user.id == username and user.password == password:
+            return user
+    return None
 
 def auth(id, password, address):
-	#print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
+    if id in users:
+        user = users[id]
 
-	if id not in users:
-		return None
+        if user.requireAuth == 0 and address == user.remoteAddr:
+            return user
 
-	user = users[id]
+        if user.remoteAddr and user.remoteAddr != address:
+            return None
 
-	if user.requireAuth == 0 and address == user.remoteAddr:
-		return user
+        authenticated_user = find_user_by_credentials(id, password)
+        if authenticated_user and authenticated_user != user:
+            return None
 
-	if user.remoteAddr and user.remoteAddr != address:
-		return None
-
-	# TODO: save password hash in config
-	if user.password != password:
-		return None
-
-	return user
+        return authenticated_user
 
 def load(path='conf/users.conf'):
-	global users
+    global users
 
-	if not os.path.isfile(path):
-		id = 'guest'
-		users[id] = User()
-		users[id].setPassword('guest')
-		users[id].setId('guest')
-		return
+    if not os.path.isfile(path):
+        id = 'guest'
+        users[id] = User()
+        users[id].setPassword('guest')
+        users[id].setId('guest')
+        return
 
-	firstLine = True
-	map = ['id', 'password', 'isAdmin']
-	with open(path, encoding="utf-8-sig") as f:
-		for line in f.readlines():
-			line = line.strip()
-			if len(line) == 0 or line[0] == '#':
-				continue
-			if firstLine:
-				firstLine = False
-				if re.match(r'[A-Za-z\|\s]+', line, re.I):
-					map = line.split('|')
-					continue
+    firstLine = True
+    map = ['id', 'password', 'isAdmin']
+    with open(path, encoding="utf-8-sig") as f:
+        for line in f.readlines():
+            line = line.strip()
+            if len(line) == 0 or line[0] == '#':
+                continue
+            if firstLine:
+                firstLine = False
+                if re.match(r'[A-Za-z\|\s]+', line, re.I):
+                    map = line.split('|')
+                    continue
 
-			t = User()
-			t.loadCsv(line, map)
+            t = User()
+            t.loadCsv(line, map)
 
-			users[t.id] = t
-
-			Print.info('loaded user ' + str(t.id))
+            users[t.id] = t
 
 def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
-	os.makedirs(os.path.dirname(fileName), exist_ok=True)
-	global users
-	buffer = ''
+    os.makedirs(os.path.dirname(fileName), exist_ok=True)
+    global users
+    buffer = ''
 
-	buffer += '|'.join(map) + '\n'
-	for k, t in users.items():
-		buffer += t.serialize(map) + '\n'
+    buffer += '|'.join(map) + '\n'
+    for k, t in users.items():
+        buffer += t.serialize(map) + '\n'
 
-	with open(fileName, 'w', encoding='utf-8-sig') as csv:
-		csv.write(buffer)
-
+    with open(fileName, 'w', encoding='utf-8-sig') as csv:
+        csv.write(buffer)
 
 load()
