@@ -14,10 +14,7 @@ class User:
 		self.requireAuth = True
 		self.switchHost = None
 		self.switchPort = None
-       # self.isLoggedIn = False  
-        
-        
-        
+
 	def loadCsv(self, line, map=[]):
 		split = line.split('|')
 		for i, value in enumerate(split):
@@ -91,40 +88,24 @@ def first():
 	return None
 
 def auth(id, password, address):
-    #print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
+	#print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
 
-    if id not in users:
-        return None
+	if id not in users:
+		return None
 
-    user = users[id]
+	user = users[id]
 
-    # Check if the user is already logged in
-    if user.isLoggedIn:
-        return None
+	if user.requireAuth == 0 and address == user.remoteAddr:
+		return user
 
-    if user.requireAuth == 0 and address == user.remoteAddr:
-        return user
+	if user.remoteAddr and user.remoteAddr != address:
+		return None
 
-    if user.remoteAddr and user.remoteAddr != address:
-        return None
+	# TODO: save password hash in config
+	if user.password != password:
+		return None
 
-    # TODO: save password hash in config
-    if user.password != password:
-        return None
-
-    # Set the isLoggedIn attribute to True to indicate that the user is now logged in
-    user.isLoggedIn = True
-
-    return user
-
-
-
-def logout(user):
-    user.isLoggedIn = False
-
-
-
-
+	return user
 
 def load(path='conf/users.conf'):
 	global users
