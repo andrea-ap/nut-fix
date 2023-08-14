@@ -120,7 +120,7 @@ def auth(id, password, address):
         
         
      # Set the isLoggedIn attribute to True to indicate that the user is now logged user.isLoggedIn = True
-     user.isLoggedIn = True
+     #user.isLoggedIn = True
      
      
      
@@ -129,8 +129,8 @@ def auth(id, password, address):
     
     #You will also need to add a way to log users out
     
-    def logout(user):
-user.isLoggedIn = False
+    #def logout(user):
+#user.isLoggedIn = False
 
 
 
