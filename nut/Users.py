@@ -100,8 +100,8 @@ def auth(id, password, address):
     
     
     # Check if the user is already logged in
-if user.isLoggedIn:
-return None
+#if user.isLoggedIn:
+#return None
 
 
 
@@ -181,4 +181,3 @@ def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
 
 
 load()
-
