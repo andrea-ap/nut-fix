@@ -14,7 +14,7 @@ class User:
 		self.requireAuth = True
 		self.switchHost = None
 		self.switchPort = None
-        self.isLoggedIn = False  
+       # self.isLoggedIn = False  
         
         
         
@@ -119,8 +119,8 @@ def auth(id, password, address):
 
 
 
-#def logout(user):
-    #user.isLoggedIn = False
+def logout(user):
+    user.isLoggedIn = False
 
 
 
