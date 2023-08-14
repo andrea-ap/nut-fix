@@ -119,8 +119,8 @@ def auth(id, password, address):
 
 
 
-def logout(user):
-    user.isLoggedIn = False
+#def logout(user):
+    #user.isLoggedIn = False
 
 
 
