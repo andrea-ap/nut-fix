@@ -87,34 +87,39 @@ def first():
 		return user
 	return None
     
-   connected_users = {} 
+    
+    
+    
+    
+connected_users = {} 
 
 def auth(id, password, address):
     global connected_users
     if id not in users:
         return None
 
-	user = users[id]
+    user = users[id]
 
-	if user.requireAuth == 0 and address == user.remoteAddr:
-		return user
+    if user.requireAuth == 0 and address == user.remoteAddr:
+        return user
 
-	if user.remoteAddr and user.remoteAddr != address:
-		return None
+    if user.remoteAddr and user.remoteAddr != address:
+        return None
 
-	# TODO: save password hash in config
-	if user.password != password:
-		return None
+    # TODO: save password hash in config
+    if user.password != password:
+        return None
         
-        # Check if the user is already connected
+    # Check if the user is already connected
     if id in connected_users:
         # User is already connected, deny access
         return None
         
         
-        # User is not already connected, allow access and add to connected_users
+    # User is not already connected, allow access and add to connected_users
     connected_users[id] = user
     return user
+
     
     
     def disconnect(id):
