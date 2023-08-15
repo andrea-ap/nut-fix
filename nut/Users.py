@@ -14,9 +14,6 @@ class User:
 		self.requireAuth = True
 		self.switchHost = None
 		self.switchPort = None
-        
-        # Logged
-        self.isLoggedIn = False
 
 	def loadCsv(self, line, map=[]):
 		split = line.split('|')
@@ -89,25 +86,15 @@ def first():
 	for id, user in users.items():
 		return user
 	return None
+    
+   connected_users = {} 
 
 def auth(id, password, address):
-	#print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
-    
-    # Check if the user is already logged in
-if user.isLoggedIn:
-return None
-
-	if id not in users:
-		return None
+    global connected_users
+    if id not in users:
+        return None
 
 	user = users[id]
-    
-    
-    
-
-
-
-
 
 	if user.requireAuth == 0 and address == user.remoteAddr:
 		return user
@@ -119,22 +106,23 @@ return None
 	if user.password != password:
 		return None
         
+        # Check if the user is already connected
+    if id in connected_users:
+        # User is already connected, deny access
+        return None
         
         
-     # Set the isLoggedIn attribute to True to indicate that the user is now logged user.isLoggedIn = True
-     user.isLoggedIn = True
-     
-     
-     
-
-	return user
+        # User is not already connected, allow access and add to connected_users
+    connected_users[id] = user
+    return user
     
     
+    def disconnect(id):
+    global connected_users
+    if id in connected_users:
+        del connected_users[id]    
 
-
-
-    
-    
+	
 
 def load(path='conf/users.conf'):
 	global users
@@ -177,12 +165,6 @@ def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
 
 	with open(fileName, 'w', encoding='utf-8-sig') as csv:
 		csv.write(buffer)
-        
-        
-        #You will also need to add a way to log users out
-    
-    def logout(user):
-user.isLoggedIn = False
 
 
 load()
