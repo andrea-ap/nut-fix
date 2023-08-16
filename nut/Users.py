@@ -107,9 +107,9 @@ def auth(id, password, address):
     if user.password != password:
         return None
 
-    # Check if the user is already connected quando si connette utente 1 in conteggio permanente 
+    # Check if the user is already connected inserisci qui conteggio
     if id in connected_users:
-        if session_counts.get(id, 0) >= 3:
+        if session_counts.get(id, 0) >= 5:
             # User has reached the maximum number of sessions
             return None
     else:
