@@ -88,8 +88,10 @@ def first():
 
 connected_users = {}
 
+session_counts = {}
+
 def auth(id, password, address):
-    global connected_users
+    global connected_users, session_counts
     if id not in users:
         return None
 
@@ -107,17 +109,29 @@ def auth(id, password, address):
 
     # Check if the user is already connected
     if id in connected_users:
-        # User is already connected, deny access
-        return None
+        if session_counts.get(id, 0) >= 3:
+            # User has reached the maximum number of sessions
+            return None
+    else:
+        session_counts[id] = 0
+
+    # Increment the session count for the user
+    session_counts[id] += 1
 
     # User is not already connected, allow access and add to connected_users
     connected_users[id] = user
     return user
 
+
 def disconnect(id):
-    global connected_users
+    global connected_users, session_counts
     if id in connected_users:
         del connected_users[id]
+        if id in session_counts:
+            session_counts[id] -= 1
+            if session_counts[id] <= 0:
+                del session_counts[id]
+
 
 def load(path='conf/users.conf'):
     global users
