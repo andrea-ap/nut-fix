@@ -109,7 +109,7 @@ def auth(id, password, address):
 
     # Check if the user is already connected
     if id in connected_users:
-        if session_counts.get(id, 0) >= 5:
+        if session_counts.get(id, 0) >= 10:
             # User has reached the maximum number of sessions
             return None
     else:
