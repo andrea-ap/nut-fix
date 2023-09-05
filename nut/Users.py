@@ -4,6 +4,7 @@ import re
 from nut import Print
 
 users = {}
+allowed_ips = set()  # Set to store allowed IP addresses
 
 class User:
     def __init__(self):
@@ -86,12 +87,22 @@ def first():
         return user
     return None
 
-connected_users = {}
+def load_allowed_ips(ip_file='ip.txt'):
+    global allowed_ips
+    allowed_ips = set()
 
-session_counts = {}
+    with open(ip_file, 'r') as f:
+        for line in f:
+            ip = line.strip()
+            if re.match(r'^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}$', ip):
+                allowed_ips.add(ip)
+
+def is_ip_allowed(ip_address):
+    return ip_address in allowed_ips
 
 def auth(id, password, address):
-    global connected_users, session_counts
+    #print('Authing: ' + str(id) + ' - ' + str(password) + ', ' + str(address))
+    
     if id not in users:
         return None
 
@@ -103,35 +114,13 @@ def auth(id, password, address):
     if user.remoteAddr and user.remoteAddr != address:
         return None
 
-    # TODO: save password hash in config
+    if not is_ip_allowed(address):  # Check if IP address is allowed
+        return None
+
     if user.password != password:
         return None
 
-    # Check if the user is already connected
-    if id in connected_users:
-        if session_counts.get(id, 0) >= 10:
-            # User has reached the maximum number of sessions
-            return None
-    else:
-        session_counts[id] = 0
-
-    # Increment the session count for the user
-    session_counts[id] += 1
-
-    # User is not already connected, allow access and add to connected_users
-    connected_users[id] = user
     return user
-
-
-def disconnect(id):
-    global connected_users, session_counts
-    if id in connected_users:
-        del connected_users[id]
-        if id in session_counts:
-            session_counts[id] -= 1
-            if session_counts[id] <= 0:
-                del session_counts[id]
-
 
 def load(path='conf/users.conf'):
     global users
@@ -176,3 +165,4 @@ def export(fileName='conf/users.conf', map=['id', 'password', 'isAdmin']):
         csv.write(buffer)
 
 load()
+load_allowed_ips()
