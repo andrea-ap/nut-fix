@@ -2,7 +2,7 @@
 
 Nut is a multi-purpose utility to organize, manage, and install Nintendo Switch files (NSP, NSZ, XCI, XCZ).
 It has the ability to act as a USB and network server for [Tinfoil](https://tinfoil.io/Download#download).
-
+I changed the authentication system, it detects name and password, but it is associated with an IP address.
 ------
 
 ![NUT GUI Image](./images/gui_files.jpg)
