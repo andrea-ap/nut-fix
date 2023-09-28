@@ -30,6 +30,8 @@ The GUI has the ability to set the most common configuration options, see the be
 ![Remote Scan](./images/gui_scan2.jpg)
 </details>
 
+I changed the authentication system, it detects name and password, but it is associated with an IP address.
+
 The IP/Port/User/Password are the information needed to login to the NUT server. To the right of those, you can also see a `USB Status` indicator, indicating whether a Tinfoil client is connected via USB with the server.
 
 THe body shows a table containing a list of files that were detected by NUT from the scanned paths. It shows the title count, file name, title ID, title type and title size for each scanned file.
