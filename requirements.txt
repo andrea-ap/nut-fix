@@ -10,7 +10,7 @@ google-auth-oauthlib~=0.4.6
 pycryptodome~=3.14.1
 pycryptoplus~=0.0.1
 pyopenssl~=22.0.0
-Flask~=2.0.3
+Flask~=3.0.0
 Pillow~=9.0.1
 zstandard==0.15.2
 future~=0.18.2
